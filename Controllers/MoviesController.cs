@@ -1,5 +1,8 @@
+using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MoviesAPI.Models;
+using MoviesAPI.Models.Dtos;
 using MoviesAPI.Repository.IRepository;
 
 namespace MoviesAPI.Controllers
@@ -9,15 +12,18 @@ namespace MoviesAPI.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepository;
-        public MoviesController(IMovieRepository movieRepository)
+        private readonly IMapper _mapper;
+        public MoviesController(IMovieRepository movieRepository, IMapper mapper)
         {
             _movieRepository = movieRepository;
+            _mapper = mapper;
         }
         [HttpGet]
         public IActionResult GetMovies()
         {
             var movies = _movieRepository.GetMovies();
-            return Ok(movies);
+            var moviesDto = _mapper.Map<List<MovieDto>>(movies);
+            return Ok(moviesDto);
         }
         [HttpGet("{id:int}", Name = "GetMovie")]
         public IActionResult GetMovie(int id)
@@ -27,7 +33,9 @@ namespace MoviesAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(movie);
+            var movieDto = _mapper.Map<MovieDto>(movie);
+            return Ok(movieDto);
         }
+        
     }
 }
