@@ -9,6 +9,7 @@ public static class MapsterConfig
   public static void RegisterMappings()
   {
     TypeAdapterConfig<Movie, MovieDto>.NewConfig().TwoWays();
+    TypeAdapterConfig<Movie, CreateMovieDto>.NewConfig().TwoWays();
 
     TypeAdapterConfig<Genre, GenreDto>.NewConfig().TwoWays();
   }

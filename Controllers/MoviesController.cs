@@ -22,7 +22,7 @@ namespace MoviesAPI.Controllers
         public IActionResult GetMovies()
         {
             var movies = _movieRepository.GetMovies();
-            var moviesDto = _mapper.Map<List<MovieDto>>(movies);
+            var moviesDto = _mapper.Map<List<MovieDto>>(movies).OrderBy(m => m.Id);
             return Ok(moviesDto);
         }
         [HttpGet("{id:int}", Name = "GetMovie")]
@@ -36,6 +36,30 @@ namespace MoviesAPI.Controllers
             var movieDto = _mapper.Map<MovieDto>(movie);
             return Ok(movieDto);
         }
-        
+        [HttpPost]
+        public IActionResult CreateMovie(CreateMovieDto createMovieDto)
+        {
+            if(createMovieDto == null || !ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (_movieRepository.MovieExists(createMovieDto.Title))
+            {
+                ModelState.AddModelError("CustomError", "La pelicula ya existe");
+                return BadRequest(ModelState);
+            }
+            var movie = _mapper.Map<Movie>(createMovieDto);
+            if(!_movieRepository.CreateMovie(movie))
+            {
+                ModelState.AddModelError("CustomError", $"Algo salió mal al guardar el registro {movie.Title}");
+                return StatusCode(500, ModelState);
+            }
+            var movieDto = _mapper.Map<MovieDto>(movie);
+
+            return CreatedAtRoute(
+                "GetMovie",
+                new { id = movie.Id },
+                movieDto);
+        }
     }
 }
