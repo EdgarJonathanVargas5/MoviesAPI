@@ -13,11 +13,13 @@ namespace MoviesAPI.Controllers
     {
         private readonly IMovieRepository _movieRepository;
         private readonly IMapper _mapper;
+
         public MoviesController(IMovieRepository movieRepository, IMapper mapper)
         {
             _movieRepository = movieRepository;
             _mapper = mapper;
         }
+
         [HttpGet]
         public IActionResult GetMovies()
         {
@@ -25,6 +27,7 @@ namespace MoviesAPI.Controllers
             var moviesDto = _mapper.Map<List<MovieDto>>(movies).OrderBy(m => m.Id);
             return Ok(moviesDto);
         }
+
         [HttpGet("{id:int}", Name = "GetMovie")]
         public IActionResult GetMovie(int id)
         {
@@ -36,6 +39,7 @@ namespace MoviesAPI.Controllers
             var movieDto = _mapper.Map<MovieDto>(movie);
             return Ok(movieDto);
         }
+
         [HttpPost]
         public IActionResult CreateMovie([FromBody]CreateMovieDto createMovieDto)
         {
@@ -61,7 +65,8 @@ namespace MoviesAPI.Controllers
                 new { id = movie.Id },
                 movieDto);
         }
-        [HttpPut("{id:int}")]
+
+        [HttpPatch("{id:int}")]
         public IActionResult UpdateMovie(int id, [FromBody] CreateMovieDto updateMovieDto)
         {
             if(!_movieRepository.MovieExists(id))
@@ -107,6 +112,5 @@ namespace MoviesAPI.Controllers
             }
             return NoContent();
         }
-
     }
 }
