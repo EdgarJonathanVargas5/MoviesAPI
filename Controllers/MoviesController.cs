@@ -37,7 +37,7 @@ namespace MoviesAPI.Controllers
             return Ok(movieDto);
         }
         [HttpPost]
-        public IActionResult CreateMovie(CreateMovieDto createMovieDto)
+        public IActionResult CreateMovie([FromBody]CreateMovieDto createMovieDto)
         {
             if(createMovieDto == null || !ModelState.IsValid)
             {
@@ -61,5 +61,52 @@ namespace MoviesAPI.Controllers
                 new { id = movie.Id },
                 movieDto);
         }
+        [HttpPut("{id:int}")]
+        public IActionResult UpdateMovie(int id, [FromBody] CreateMovieDto updateMovieDto)
+        {
+            if(!_movieRepository.MovieExists(id))
+            {
+                return NotFound();
+            }
+            if(updateMovieDto == null || !ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (_movieRepository.MovieExists(updateMovieDto.Title, id))
+            {
+                ModelState.AddModelError("CustomError", "La pelicula ya existe");
+                return BadRequest(ModelState);
+            }
+            var movie = _mapper.Map<Movie>(updateMovieDto);
+            movie.Id = id;
+            if(!_movieRepository.UpdateMovie(movie))
+            {
+                ModelState.AddModelError("CustomError", $"Algo salió mal al actualizar el registro {movie.Title}");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteMovie(int id)
+        {
+            if (!_movieRepository.MovieExists(id))
+            {
+                return NotFound($"La pelicula con el id {id} no existe");
+            }
+            var movie = _movieRepository.GetMovie(id);
+            if (movie == null)
+            {
+                return NotFound($"La pelicula con el id {id} no existe");
+            }
+
+            if (!_movieRepository.DeleteMovie(movie))
+            {
+                ModelState.AddModelError("CustomError", $"Algo salió mal al eliminar el registro {movie.Title}");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
+
     }
 }

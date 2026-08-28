@@ -43,6 +43,13 @@ public class MovieRepository : IMovieRepository
         return _db.Movies.Any(m => m.Title.ToLower().Trim() == title.ToLower().Trim());
     }
 
+    public bool MovieExists(string title, int id)
+    {
+        return _db.Movies.Any(m =>
+                m.Title.ToLower().Trim() == title.ToLower().Trim()
+                && m.Id != id);
+    }
+
     public bool Save()
     {
         return _db.SaveChanges() >= 0;
