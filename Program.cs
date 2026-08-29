@@ -1,5 +1,9 @@
+using MoviesAPI.Mapping;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using MoviesAPI.Data;
+using MoviesAPI.Repository;
+using MoviesAPI.Repository.IRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +13,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
         connectionString,
         ServerVersion.AutoDetect(connectionString)));
+        
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddMapster();
+
+MapsterConfig.RegisterMappings();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
