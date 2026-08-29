@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MoviesAPI.Data;
 using MoviesAPI.Models;
 using MoviesAPI.Repository.IRepository;
@@ -11,53 +12,53 @@ public class MovieRepository : IMovieRepository
     {
         _db = db;
     }
-    public bool CreateMovie(Movie movie)
+    public async Task<bool> CreateMovie(Movie movie)
     {
-        _db.Movies.Add(movie);
-        return Save();
+        await _db.Movies.AddAsync(movie);
+        return await SaveAsync();
     }
 
-    public bool DeleteMovie(Movie movie)
+    public async Task<bool> DeleteMovie(Movie movie)
     {
         _db.Movies.Remove(movie);
-        return Save();
+        return await SaveAsync();
     }
 
-    public Movie? GetMovie(int id)
+    public async Task<Movie?> GetMovie(int id)
     {
-        return _db.Movies.FirstOrDefault(m => m.Id == id);
+        return await _db.Movies.FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public ICollection<Movie> GetMovies()
+    public async Task<ICollection<Movie>> GetMovies()
     {
-        return _db.Movies.OrderBy(m => m.Title).ToList();
+        return await _db.Movies.OrderBy(m => m.Title).ToListAsync();
     }
 
-    public bool MovieExists(int id)
+    public async Task<bool> MovieExists(int id)
     {
-        return _db.Movies.Any(m => m.Id == id);
+        return await _db.Movies.AnyAsync(m => m.Id == id);
     }
 
-    public bool MovieExists(string title)
+    public async Task<bool> MovieExists(string title)
     {
-        return _db.Movies.Any(m => m.Title.ToLower().Trim() == title.ToLower().Trim());
+        return await _db.Movies.AnyAsync(m => m.Title.ToLower().Trim() == title.ToLower().Trim());
     }
 
-    public bool MovieExists(string title, int id)
+    public async Task<bool> MovieExists(string title, int id)
     {
-        return _db.Movies.Any(m =>
+        return await _db.Movies.AnyAsync(m =>
                 m.Title.ToLower().Trim() == title.ToLower().Trim()
                 && m.Id != id);
     }
 
-    public bool Save()
+    public async Task<bool> SaveAsync()
     {
-        return _db.SaveChanges() >= 0;
+        return await _db.SaveChangesAsync() > 0;
     }
 
-    public bool UpdateMovie(Movie movie)
+    public async Task<bool> UpdateMovie(Movie movie)
     {
         _db.Movies.Update(movie);
-        return Save();
+        return await SaveAsync();
     }
 }

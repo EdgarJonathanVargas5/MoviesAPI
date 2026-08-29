@@ -4,13 +4,13 @@ namespace MoviesAPI.Repository.IRepository;
 
 public interface IMovieRepository
 {
-    ICollection<Movie> GetMovies();
-    Movie? GetMovie(int id);
-    bool MovieExists(int id);
-    bool MovieExists(string name);
-    bool MovieExists(string title, int id);
-    bool CreateMovie(Movie movie);
-    bool UpdateMovie(Movie movie);
-    bool DeleteMovie(Movie movie);
-    bool Save();
+    Task<ICollection<Movie>> GetMovies();
+    Task<Movie?> GetMovie(int id);
+    Task<bool> MovieExists(int id);
+    Task<bool> MovieExists(string name);
+    Task<bool> MovieExists(string title, int id);
+    Task<bool> CreateMovie(Movie movie);
+    Task<bool> UpdateMovie(Movie movie);
+    Task<bool> DeleteMovie(Movie movie);
+    Task<bool> SaveAsync();
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MoviesAPI.Data;
 using MoviesAPI.Models;
 using MoviesAPI.Repository.IRepository;
@@ -11,46 +12,46 @@ public class GenreRepository : IGenreRepository
     {
         _db = db;
     }
-    public bool CreateGenre(Genre genre)
+    public async Task<bool> CreateGenre(Genre genre)
     {
-        _db.Genres.Add(genre);
-        return Save();
+        await _db.Genres.AddAsync(genre);
+        return await SaveAsync();
     }
 
-    public bool DeleteGenre(Genre genre)
+    public async Task<bool> DeleteGenre(Genre genre)
     {
         _db.Genres.Remove(genre);
-        return Save();
+        return await SaveAsync();
     }
 
-    public bool GenreExists(int id)
+    public async Task<bool> GenreExists(int id)
     {
-        return _db.Genres.Any(g => g.Id == id);
+        return await _db.Genres.AnyAsync(g => g.Id == id);
     }
 
-    public bool GenreExists(string name)
+    public async Task<bool> GenreExists(string name)
     {
-        return _db.Genres.Any(g => g.Name.ToLower().Trim() == name.ToLower().Trim());
+        return await _db.Genres.AnyAsync(g => g.Name.ToLower().Trim() == name.ToLower().Trim());
     }
 
-    public Genre? GetGenre(int id)
+    public async Task<Genre?> GetGenre(int id)
     {
-        return _db.Genres.FirstOrDefault(g => g.Id == id);
+        return await _db.Genres.FirstOrDefaultAsync(g => g.Id == id);
     }
 
-    public ICollection<Genre> GetGenres()
+    public async Task<ICollection<Genre>> GetGenres()
     {
-        return _db.Genres.OrderBy(g => g.Name).ToList();
+        return await _db.Genres.OrderBy(g => g.Name).ToListAsync();
     }
 
-    public bool Save()
+    public async Task<bool> SaveAsync()
     {
-        return _db.SaveChanges() >= 0;
+        return await _db.SaveChangesAsync() > 0;
     }
 
-    public bool UpdateGenre(Genre genre)
+    public async Task<bool> UpdateGenre(Genre genre)
     {
         _db.Genres.Update(genre);
-        return Save();
+        return await SaveAsync();
     }
 }

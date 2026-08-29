@@ -4,12 +4,12 @@ namespace MoviesAPI.Repository.IRepository;
 
 public interface IGenreRepository
 {
-    ICollection<Genre> GetGenres();
-    Genre? GetGenre(int id);
-    bool GenreExists(int id);
-    bool GenreExists(string name);
-    bool CreateGenre(Genre genre);
-    bool UpdateGenre(Genre genre);
-    bool DeleteGenre(Genre genre);
-    bool Save();
+    Task<ICollection<Genre>> GetGenres();
+    Task<Genre?> GetGenre(int id);
+    Task<bool> GenreExists(int id);
+    Task<bool> GenreExists(string name);
+    Task<bool> CreateGenre(Genre genre);
+    Task<bool> UpdateGenre(Genre genre);
+    Task<bool> DeleteGenre(Genre genre);
+    Task<bool> SaveAsync();
 }
