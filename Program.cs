@@ -1,21 +1,11 @@
 using MoviesAPI.Mapping;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
-using MoviesAPI.Data;
-using MoviesAPI.Repository;
-using MoviesAPI.Repository.IRepository;
+using MoviesAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(
-        connectionString,
-        ServerVersion.AutoDetect(connectionString)));
-        
-builder.Services.AddScoped<IMovieRepository, MovieRepository>();
-builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddDatabase(builder.Configuration);        
+builder.Services.AddApplicationServices();
 builder.Services.AddMapster();
 
 MapsterConfig.RegisterMappings();
