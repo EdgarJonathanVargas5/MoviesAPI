@@ -34,7 +34,7 @@ public class GenreRepository : IGenreRepository
         return await _db.Genres.AnyAsync(g => g.Name.ToLower().Trim() == name.ToLower().Trim());
     }
 
-    public async Task<Genre?> GetGenre(int id)
+    public async Task<Genre?> GetGenreById(int id)
     {
         return await _db.Genres.FirstOrDefaultAsync(g => g.Id == id);
     }
