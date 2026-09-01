@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MoviesAPI.Models;
 using MoviesAPI.Models.Dtos;
 using MoviesAPI.Repository.IRepository;
+using MoviesAPI.Service.IService;
 
 namespace MoviesAPI.Controllers
 {
@@ -11,106 +12,105 @@ namespace MoviesAPI.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        private readonly IMovieRepository _movieRepository;
-        private readonly IMapper _mapper;
+        private readonly IMovieService _movieService;
 
-        public MoviesController(IMovieRepository movieRepository, IMapper mapper)
+        public MoviesController(IMovieService movieService)
         {
-            _movieRepository = movieRepository;
-            _mapper = mapper;
+            _movieService = movieService;
         }
 
         [HttpGet]
-        public IActionResult GetMovies()
+        public async Task<IActionResult> GetMovies()
         {
-            var movies = _movieRepository.GetMovies();
-            var moviesDto = _mapper.Map<List<MovieDto>>(movies).OrderBy(m => m.Id);
-            return Ok(moviesDto);
+            var movies = await _movieService.GetMoviesAsync();
+            return Ok(movies);
         }
 
         [HttpGet("{id:int}", Name = "GetMovie")]
-        public IActionResult GetMovie(int id)
+        public async Task<IActionResult> GetMovie(int id)
         {
-            var movie = _movieRepository.GetMovie(id);
+            var movie = await _movieService.GetMovieAsync(id);
             if(movie == null)
             {
-                return NotFound();
+                return NotFound($"No se encontro la pelicula con el id {id}");
             }
-            var movieDto = _mapper.Map<MovieDto>(movie);
-            return Ok(movieDto);
+            return Ok(movie);
         }
 
         [HttpPost]
-        public IActionResult CreateMovie([FromBody]CreateMovieDto createMovieDto)
+        public async Task<IActionResult> CreateMovie([FromForm] CreateMovieDto createMovieDto)
         {
-            if(createMovieDto == null || !ModelState.IsValid)
+            if (createMovieDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (_movieRepository.MovieExists(createMovieDto.Title))
+            try
             {
-                ModelState.AddModelError("CustomError", "La pelicula ya existe");
+                var movieDto = await _movieService.CreateMovieAsync(createMovieDto);
+                return CreatedAtRoute("GetMovie", new { id = movieDto.Id }, movieDto);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError("CustomError", ex.Message);
                 return BadRequest(ModelState);
             }
-            var movie = _mapper.Map<Movie>(createMovieDto);
-            if(!_movieRepository.CreateMovie(movie))
+            catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError("CustomError", $"Algo salió mal al guardar el registro {movie.Title}");
+                ModelState.AddModelError("CustomError", ex.Message);
+                return BadRequest(ModelState);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("CustomError", "Algo salió mal al guardar el registro.");
                 return StatusCode(500, ModelState);
             }
-            var movieDto = _mapper.Map<MovieDto>(movie);
-
-            return CreatedAtRoute(
-                "GetMovie",
-                new { id = movie.Id },
-                movieDto);
         }
 
         [HttpPatch("{id:int}")]
-        public IActionResult UpdateMovie(int id, [FromBody] CreateMovieDto updateMovieDto)
+        public async Task<IActionResult> UpdateMovie(int id, [FromBody] CreateMovieDto updateMovieDto)
         {
-            if(!_movieRepository.MovieExists(id))
-            {
-                return NotFound();
-            }
-            if(updateMovieDto == null || !ModelState.IsValid)
+            if (updateMovieDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (_movieRepository.MovieExists(updateMovieDto.Title, id))
+            try
             {
-                ModelState.AddModelError("CustomError", "La pelicula ya existe");
+                var result = await _movieService.UpdateMovieAsync(id, updateMovieDto);
+                if (!result)
+                {
+                    return NotFound($"La pelicula con el id {id} no existe");
+                }
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("CustomError", ex.Message);
                 return BadRequest(ModelState);
             }
-            var movie = _mapper.Map<Movie>(updateMovieDto);
-            movie.Id = id;
-            if(!_movieRepository.UpdateMovie(movie))
+            catch (Exception)
             {
-                ModelState.AddModelError("CustomError", $"Algo salió mal al actualizar el registro {movie.Title}");
+                ModelState.AddModelError("CustomError", "Algo salió mal al actualizar el registro.");
                 return StatusCode(500, ModelState);
             }
-            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteMovie(int id)
+        public async Task<IActionResult> DeleteMovie(int id)
         {
-            if (!_movieRepository.MovieExists(id))
+            try
             {
-                return NotFound($"La pelicula con el id {id} no existe");
+                var result = await _movieService.DeleteMovieAsync(id);
+                if (!result)
+                {
+                    return NotFound($"La pelicula con el id {id} no existe");
+                }
+                return NoContent();
             }
-            var movie = _movieRepository.GetMovie(id);
-            if (movie == null)
+            catch (Exception)
             {
-                return NotFound($"La pelicula con el id {id} no existe");
-            }
-
-            if (!_movieRepository.DeleteMovie(movie))
-            {
-                ModelState.AddModelError("CustomError", $"Algo salió mal al eliminar el registro {movie.Title}");
+                ModelState.AddModelError("CustomError", "Algo salió mal al eliminar el registro.");
                 return StatusCode(500, ModelState);
             }
-            return NoContent();
         }
     }
 }
