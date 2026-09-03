@@ -1,9 +1,5 @@
-using MapsterMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MoviesAPI.Models;
 using MoviesAPI.Models.Dtos;
-using MoviesAPI.Repository.IRepository;
 using MoviesAPI.Service.IService;
 
 namespace MoviesAPI.Controllers

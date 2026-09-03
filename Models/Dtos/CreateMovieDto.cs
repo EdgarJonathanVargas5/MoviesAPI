@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MoviesAPI.Models.Dtos;
 
 public class CreateMovieDto

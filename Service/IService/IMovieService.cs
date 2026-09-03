@@ -1,4 +1,3 @@
-using System;
 using MoviesAPI.Models.Dtos;
 
 namespace MoviesAPI.Service.IService;

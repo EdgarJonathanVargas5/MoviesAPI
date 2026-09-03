@@ -1,5 +1,3 @@
-using System;
-
 namespace MoviesAPI.Models.Dtos;
 
 public class MovieDto
