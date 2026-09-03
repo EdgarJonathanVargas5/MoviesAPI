@@ -26,7 +26,7 @@ namespace MoviesAPI.Controllers
             return Ok(movies);
         }
 
-        [HttpGet("{id:int}", Name = "GetMovie")]
+        [HttpGet("{id:int}", Name = "GetMovieById")]
         public async Task<IActionResult> GetMovieById(int id)
         {
             var movie = await _movieService.GetMovieByIdAsync(id);
@@ -38,7 +38,7 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMovie([FromForm] CreateMovieDto createMovieDto)
+        public async Task<IActionResult> CreateMovie([FromBody] CreateMovieDto createMovieDto)
         {
             if (createMovieDto == null || !ModelState.IsValid)
             {
@@ -47,7 +47,7 @@ namespace MoviesAPI.Controllers
             try
             {
                 var movieDto = await _movieService.CreateMovieAsync(createMovieDto);
-                return CreatedAtRoute("GetMovie", new { id = movieDto.Id }, movieDto);
+                return CreatedAtRoute("GetMovieById", new { id = movieDto.Id }, movieDto);
             }
             catch (ArgumentException ex)
             {
