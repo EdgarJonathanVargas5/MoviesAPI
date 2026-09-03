@@ -9,10 +9,12 @@ namespace MoviesAPI.Service;
 public class MovieService : IMovieService
 {
     private readonly IMovieRepository _movieRepository;
+    private readonly IGenreRepository _genreRepository;
     private readonly IMapper _mapper;
-    public MovieService(IMovieRepository movieRepository, IMapper mapper)
+    public MovieService(IMovieRepository movieRepository, IGenreRepository genreRepository, IMapper mapper)
     {
         _movieRepository = movieRepository;
+        _genreRepository = genreRepository;
         _mapper = mapper;
     }
 
@@ -37,24 +39,33 @@ public class MovieService : IMovieService
     public async Task<MovieDto> CreateMovieAsync(CreateMovieDto createMovieDto)
     {
         if (createMovieDto == null)
+        {
             throw new ArgumentNullException(nameof(createMovieDto));
-
+        }
         if (string.IsNullOrWhiteSpace(createMovieDto.Title))
+        {
             throw new ArgumentException("El título es obligatorio.");
-
+        }
         if (string.IsNullOrWhiteSpace(createMovieDto.Description))
+        {
             throw new ArgumentException("La descripción es obligatoria.");
-
+        }
         if (await _movieRepository.MovieExists(createMovieDto.Title))
+        {
             throw new InvalidOperationException("La pelicula ya existe.");
-
+        }
+        if (!await _genreRepository.GenreExists(createMovieDto.GenreId))
+        {
+            throw new InvalidOperationException("El genero no existe.");
+        }
         var movie = _mapper.Map<Movie>(createMovieDto);
 
         var result = await _movieRepository.CreateMovie(movie);
 
         if (!result)
+        {
             throw new Exception("No se pudo guardar la película.");
-
+        }
         var movieDto = _mapper.Map<MovieDto>(movie);
         return movieDto;
     }
@@ -62,14 +73,21 @@ public class MovieService : IMovieService
     public async Task<bool> UpdateMovieAsync(int id, CreateMovieDto updateMovieDto)
     {
         if (updateMovieDto == null)
+        {
             throw new ArgumentNullException(nameof(updateMovieDto));
-
+        }
         if (!await _movieRepository.MovieExists(id))
+        {
             return false;
-
+        }
+        if (!await _genreRepository.GenreExists(updateMovieDto.GenreId))
+        {
+            throw new InvalidOperationException("El género ingresado no existe.");
+        }
         if (await _movieRepository.MovieExists(updateMovieDto.Title, id))
-            throw new InvalidOperationException("La pelicula ya existe.");
-
+        {
+            throw new InvalidOperationException("La película ya existe.");
+        }
         var movie = _mapper.Map<Movie>(updateMovieDto);
         movie.Id = id;
 
