@@ -20,16 +20,16 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMovies()
+        public async Task<IActionResult> GetAllMovies()
         {
-            var movies = await _movieService.GetMoviesAsync();
+            var movies = await _movieService.GetAllMoviesAsync();
             return Ok(movies);
         }
 
         [HttpGet("{id:int}", Name = "GetMovie")]
-        public async Task<IActionResult> GetMovie(int id)
+        public async Task<IActionResult> GetMovieById(int id)
         {
-            var movie = await _movieService.GetMovieAsync(id);
+            var movie = await _movieService.GetMovieByIdAsync(id);
             if(movie == null)
             {
                 return NotFound($"No se encontro la pelicula con el id {id}");

@@ -24,12 +24,12 @@ public class MovieRepository : IMovieRepository
         return await SaveAsync();
     }
 
-    public async Task<Movie?> GetMovie(int id)
+    public async Task<Movie?> GetMovieById(int id)
     {
         return await _db.Movies.FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<ICollection<Movie>> GetMovies()
+    public async Task<ICollection<Movie>> GetAllMovies()
     {
         return await _db.Movies.OrderBy(m => m.Title).ToListAsync();
     }

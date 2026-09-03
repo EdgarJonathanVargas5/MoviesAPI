@@ -39,7 +39,7 @@ public class GenreRepository : IGenreRepository
         return await _db.Genres.FirstOrDefaultAsync(g => g.Id == id);
     }
 
-    public async Task<ICollection<Genre>> GetGenres()
+    public async Task<ICollection<Genre>> GetAllGenres()
     {
         return await _db.Genres.OrderBy(g => g.Name).ToListAsync();
     }

@@ -14,14 +14,14 @@ public class GenreService : IGenreService
         _genreRepository = genreRepository;
         _mapper = mapper;
     }
-    public async Task<ICollection<GenreDto>> GetGenresAsync()
+    public async Task<ICollection<GenreDto>> GetAllGenresAsync()
     {
-        var genres = await _genreRepository.GetGenres();
+        var genres = await _genreRepository.GetAllGenres();
         var genresDto = _mapper.Map<List<GenreDto>>(genres);
         return genresDto;
     }
 
-    public async Task<GenreDto?> GetGenreAsync(int id)
+    public async Task<GenreDto?> GetGenreByIdAsync(int id)
     {
         var genre = await _genreRepository.GetGenreById(id);
         if (genre == null)

@@ -19,16 +19,16 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetGenres()
+        public async Task<IActionResult> GetAllGenres()
         {
-            var genres = await _genreService.GetGenresAsync();
+            var genres = await _genreService.GetAllGenresAsync();
             return Ok(genres);
         }
 
         [HttpGet("{id:int}", Name = "GetGenre")]
-        public async Task<IActionResult> GetGenre(int id)
+        public async Task<IActionResult> GetGenreById(int id)
         {
-            var genre = await _genreService.GetGenreAsync(id);
+            var genre = await _genreService.GetGenreByIdAsync(id);
             if (genre == null)
                 return NotFound($"No se encontro el genero con el id {id}");
 

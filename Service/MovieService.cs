@@ -16,9 +16,9 @@ public class MovieService : IMovieService
         _mapper = mapper;
     }
 
-    public async Task<MovieDto?> GetMovieAsync(int id)
+    public async Task<MovieDto?> GetMovieByIdAsync(int id)
     {
-        var movie = await _movieRepository.GetMovie(id);
+        var movie = await _movieRepository.GetMovieById(id);
         if(movie == null)
         {
             return null;
@@ -27,9 +27,9 @@ public class MovieService : IMovieService
         return movieDto;
     }
 
-    public async Task<ICollection<MovieDto>> GetMoviesAsync()
+    public async Task<ICollection<MovieDto>> GetAllMoviesAsync()
     {
-        var movies = await _movieRepository.GetMovies();
+        var movies = await _movieRepository.GetAllMovies();
         var moviesDto = _mapper.Map<List<MovieDto>>(movies);
         return moviesDto;
     }
@@ -82,7 +82,7 @@ public class MovieService : IMovieService
         {
             return false;
         }
-        var movie = await _movieRepository.GetMovie(id);
+        var movie = await _movieRepository.GetMovieById(id);
         if (movie == null)
         {
             return false;
