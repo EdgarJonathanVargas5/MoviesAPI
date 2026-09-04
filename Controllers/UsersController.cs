@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MoviesAPI.Models.Dtos;
 using MoviesAPI.Service.IService;
@@ -6,6 +7,7 @@ namespace MoviesAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -34,6 +36,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> RegisterUser([FromBody] CreateUserDto createUserDto)
     {
         if (!ModelState.IsValid)
@@ -62,6 +65,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("login", Name = "LoginUser")]
+    [AllowAnonymous]
     public async Task<IActionResult> LoginUser([FromBody] UserLoginDto loginDto)
     {
         if (!ModelState.IsValid)
