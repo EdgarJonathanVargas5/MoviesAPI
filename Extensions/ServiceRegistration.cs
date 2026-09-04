@@ -15,6 +15,10 @@ public static class ServiceRegistration
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<IGenreService, GenreService>();
 
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ITokenService, TokenService>();
+
         return services;
     }
 }
