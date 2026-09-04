@@ -1,13 +1,14 @@
-using MoviesAPI.Mapping;
 using Mapster;
 using MoviesAPI.Extensions;
+using MoviesAPI.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDatabase(builder.Configuration);        
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddApplicationServices();
-builder.Services.AddMapster();
 
+builder.Services.AddMapster();
 MapsterConfig.RegisterMappings();
 
 builder.Services.AddControllers();
@@ -24,6 +25,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
