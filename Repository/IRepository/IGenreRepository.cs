@@ -4,7 +4,7 @@ namespace MoviesAPI.Repository.IRepository;
 
 public interface IGenreRepository
 {
-    Task<ICollection<Genre>> GetGenres();
+    Task<ICollection<Genre>> GetAllGenres();
     Task<Genre?> GetGenreById(int id);
     Task<bool> GenreExists(int id);
     Task<bool> GenreExists(string name);

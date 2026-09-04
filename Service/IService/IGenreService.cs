@@ -4,6 +4,9 @@ namespace MoviesAPI.Service.IService;
 
 public interface IGenreService
 {
-    Task<ICollection<GenreDto>> GetGenresAsync();
-    Task<GenreDto?> GetGenreAsync(int id);
+    Task<ICollection<GenreDto>> GetAllGenresAsync();
+    Task<GenreDto?> GetGenreByIdAsync(int id);
+    Task<GenreDto> CreateGenreAsync(CreateGenreDto createGenreDto);
+    Task<bool> UpdateGenreAsync(int id, CreateGenreDto updateGenreDto);
+    Task<bool> DeleteGenreAsync(int id);
 }

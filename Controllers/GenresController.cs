@@ -6,44 +6,42 @@ namespace MoviesAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MoviesController : ControllerBase
+    public class GenresController : ControllerBase
     {
-        private readonly IMovieService _movieService;
-
-        public MoviesController(IMovieService movieService)
+        private readonly IGenreService _genreService;
+        public GenresController(IGenreService genreService)
         {
-            _movieService = movieService;
+            _genreService = genreService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllMovies()
+        public async Task<IActionResult> GetAllGenres()
         {
-            var movies = await _movieService.GetAllMoviesAsync();
-            return Ok(movies);
+            var genres = await _genreService.GetAllGenresAsync();
+            return Ok(genres);
         }
 
-        [HttpGet("{id:int}", Name = "GetMovieById")]
-        public async Task<IActionResult> GetMovieById(int id)
+        [HttpGet("{id:int}", Name = "GetGenreById")]
+        public async Task<IActionResult> GetGenreById(int id)
         {
-            var movie = await _movieService.GetMovieByIdAsync(id);
-            if(movie == null)
-            {
-                return NotFound($"No se encontro la pelicula con el id {id}");
-            }
-            return Ok(movie);
+            var genre = await _genreService.GetGenreByIdAsync(id);
+            if (genre == null)
+                return NotFound($"No se encontro el genero con el id {id}");
+
+            return Ok(genre);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMovie([FromBody] CreateMovieDto createMovieDto)
+        public async Task<IActionResult> CreateGenre([FromBody] CreateGenreDto createGenreDto)
         {
-            if (createMovieDto == null || !ModelState.IsValid)
+            if (createGenreDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                var movieDto = await _movieService.CreateMovieAsync(createMovieDto);
-                return CreatedAtRoute("GetMovieById", new { id = movieDto.Id }, movieDto);
+                var genreDto = await _genreService.CreateGenreAsync(createGenreDto);
+                return CreatedAtRoute("GetGenreById", new { id = genreDto.Id }, genreDto);
             }
             catch (ArgumentException ex)
             {
@@ -63,18 +61,18 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> UpdateMovie(int id, [FromBody] CreateMovieDto updateMovieDto)
+        public async Task<IActionResult> UpdateGenre(int id, [FromBody] CreateGenreDto updateGenreDto)
         {
-            if (updateMovieDto == null || !ModelState.IsValid)
+            if (updateGenreDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                var result = await _movieService.UpdateMovieAsync(id, updateMovieDto);
+                var result = await _genreService.UpdateGenreAsync(id, updateGenreDto);
                 if (!result)
                 {
-                    return NotFound($"La pelicula con el id {id} no existe");
+                    return NotFound($"El genero con el id {id} no existe");
                 }
                 return NoContent();
             }
@@ -91,14 +89,14 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteMovie(int id)
+        public async Task<IActionResult> DeleteGenre(int id)
         {
             try
             {
-                var result = await _movieService.DeleteMovieAsync(id);
+                var result = await _genreService.DeleteGenreAsync(id);
                 if (!result)
                 {
-                    return NotFound($"La pelicula con el id {id} no existe");
+                    return NotFound($"El genero con el id {id} no existe");
                 }
                 return NoContent();
             }
@@ -107,13 +105,6 @@ namespace MoviesAPI.Controllers
                 ModelState.AddModelError("CustomError", "Algo salió mal al eliminar el registro.");
                 return StatusCode(500, ModelState);
             }
-        }
-
-        [HttpGet("AllByGenreId/{id:int}")]
-        public async Task<IActionResult> GetAllMoviesByGenreId(int id)
-        {
-            var movies = await _movieService.GetAllMoviesByGenreIdAsync(id);
-            return Ok(movies);
         }
     }
 }
