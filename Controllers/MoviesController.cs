@@ -108,5 +108,12 @@ namespace MoviesAPI.Controllers
                 return StatusCode(500, ModelState);
             }
         }
+
+        [HttpGet("AllByGenreId/{id:int}")]
+        public async Task<IActionResult> GetAllMoviesByGenreId(int id)
+        {
+            var movies = await _movieService.GetAllMoviesByGenreIdAsync(id);
+            return Ok(movies);
+        }
     }
 }

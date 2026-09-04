@@ -31,7 +31,15 @@ public class MovieRepository : IMovieRepository
 
     public async Task<ICollection<Movie>> GetAllMovies()
     {
-        return await _db.Movies.OrderBy(m => m.Title).ToListAsync();
+        return await _db.Movies.OrderBy(m => m.Id).ToListAsync();
+    }
+
+    public async Task<ICollection<Movie>> GetAllMoviesByGenreId(int genreId)
+    {
+        return await _db.Movies
+            .Where(movie => movie.GenreId == genreId)
+            .OrderBy(movie => movie.Id)
+            .ToListAsync();
     }
 
     public async Task<bool> MovieExists(int id)

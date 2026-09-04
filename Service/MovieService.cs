@@ -36,6 +36,12 @@ public class MovieService : IMovieService
         return moviesDto;
     }
 
+    public async Task<ICollection<MovieDto>> GetAllMoviesByGenreIdAsync(int genreId)
+    {
+        var movies = await _movieRepository.GetAllMoviesByGenreId(genreId);
+        return _mapper.Map<List<MovieDto>>(movies);
+    }
+
     public async Task<MovieDto> CreateMovieAsync(CreateMovieDto createMovieDto)
     {
         if (createMovieDto == null)

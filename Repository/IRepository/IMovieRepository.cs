@@ -5,6 +5,7 @@ namespace MoviesAPI.Repository.IRepository;
 public interface IMovieRepository
 {
     Task<ICollection<Movie>> GetAllMovies();
+    Task<ICollection<Movie>> GetAllMoviesByGenreId(int genreId);
     Task<Movie?> GetMovieById(int id);
     Task<bool> MovieExists(int id);
     Task<bool> MovieExists(string name);

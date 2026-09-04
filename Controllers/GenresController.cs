@@ -59,5 +59,52 @@ namespace MoviesAPI.Controllers
                 return StatusCode(500, ModelState);
             }
         }
+
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> UpdateGenre(int id, [FromBody] CreateGenreDto updateGenreDto)
+        {
+            if (updateGenreDto == null || !ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var result = await _genreService.UpdateGenreAsync(id, updateGenreDto);
+                if (!result)
+                {
+                    return NotFound($"El genero con el id {id} no existe");
+                }
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("CustomError", ex.Message);
+                return BadRequest(ModelState);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("CustomError", "Algo salió mal al actualizar el registro.");
+                return StatusCode(500, ModelState);
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteGenre(int id)
+        {
+            try
+            {
+                var result = await _genreService.DeleteGenreAsync(id);
+                if (!result)
+                {
+                    return NotFound($"El genero con el id {id} no existe");
+                }
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("CustomError", "Algo salió mal al eliminar el registro.");
+                return StatusCode(500, ModelState);
+            }
+        }
     }
 }
