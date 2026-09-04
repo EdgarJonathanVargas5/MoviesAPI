@@ -12,5 +12,10 @@ public static class MapsterConfig
     TypeAdapterConfig<Movie, CreateMovieDto>.NewConfig().TwoWays();
 
     TypeAdapterConfig<Genre, GenreDto>.NewConfig().TwoWays();
+
+    TypeAdapterConfig<User, UserDto>.NewConfig().TwoWays();
+    TypeAdapterConfig<User, UserLoginDto>.NewConfig().TwoWays();
+    TypeAdapterConfig<User, UserLoginResponseDto>.NewConfig().TwoWays();
+    TypeAdapterConfig<User, UserRegisterDto>.NewConfig().TwoWays();
   }
 }
